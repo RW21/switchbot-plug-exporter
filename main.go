@@ -15,9 +15,6 @@ func main() {
 		port = "9101"
 	}
 
-	// exporter := NewExporter()
-	// prometheus.MustRegister(exporter)
-
 	s := NewHttpServer()
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(":"+port, s))

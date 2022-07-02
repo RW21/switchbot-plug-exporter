@@ -1,7 +1,7 @@
 FROM golang:1.18 as builder
 
-ARG GOARCH=amd64
-ARG GOOS=linux
+ARG GOARCH
+ARG GOOS
 
 COPY . /src
 WORKDIR /src
