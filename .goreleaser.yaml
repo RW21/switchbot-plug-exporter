@@ -17,6 +17,7 @@ before:
 
 dockers:
   - use: buildx
+    id: switchbot
     goos: linux
     goarch: amd64
     image_templates:
@@ -24,14 +25,12 @@ dockers:
     build_flag_templates:
       - "--GOARCH=amd64"
       - "--GOOS=linux"
+    skip_push: true
 
-# archives:
-#   - replacements:
-#       darwin: Darwin
-#       linux: Linux
-#       windows: Windows
-#       386: i386
-#       amd64: x86_64
+docker_manifests:
+  - name_template: rw21/{{ .ProjectName }}:{{ .Version }}
+    image_templates:
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-amd64"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
