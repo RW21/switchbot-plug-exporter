@@ -1,43 +1,54 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
 project_name: switchbot-plug-exporter
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
-    - go generate ./...
-# builds:
-#   - env:
-#       - CGO_ENABLED=0
-#     goos:
-#       - linux
-#       - windows
-#       - darwin
+builds:
+  - env:
+      # - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
 
 dockers:
-  - use: buildx
-    id: switchbot
-    goos: linux
+  - goos: linux
     goarch: amd64
     image_templates:
-      - "rw21/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-linux-amd64"
     build_flag_templates:
-      - "--GOARCH=amd64"
-      - "--GOOS=linux"
-    skip_push: true
+      - "--platform=linux/amd64"
+
+  - goos: linux
+    goarch: arm64
+    image_templates:
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-linux-arm64"
+    build_flag_templates:
+      - "--platform=linux/arm/v6"
+
+  - goos: darwin
+    goarch: arm64
+    image_templates:
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-darwin-arm64"
+
+  - goos: darwin
+    goarch: amd64
+    image_templates:
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-darwin-amd64"
 
 docker_manifests:
   - name_template: rw21/{{ .ProjectName }}:{{ .Version }}
     image_templates:
-      - "rw21/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-linux-amd64"
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-linux-arm64"
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-darwin-arm64"
+      - "rw21/{{ .ProjectName }}:{{ .Version }}-darwin-amd64"
 checksum:
   name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+
+release:
+  github:
+    owner: RW21
+    name: switchbot-plug-exporter
